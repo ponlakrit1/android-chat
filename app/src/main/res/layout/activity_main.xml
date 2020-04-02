@@ -35,10 +35,11 @@
             android:id="@+id/button_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="10dp"
             android:background="@color/colorButton"
+            android:onClick="onLogin"
             android:text="Login"
             android:textColor="#ffffff"
             android:textSize="18sp" />

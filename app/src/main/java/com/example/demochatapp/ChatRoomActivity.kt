@@ -1,6 +1,9 @@
 package com.example.demochatapp
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,11 +22,15 @@ class ChatRoomActivity : AppCompatActivity() {
     private var chatArray: ArrayList<String>? = null
     private var chatAdapter: ArrayAdapter<String>? = null
 
+    lateinit var prefs : SharedPreferences;
+    lateinit var editor : SharedPreferences.Editor;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
 
         chatArray = ArrayList<String>();
+        prefs = getSharedPreferences("UserPref", Context.MODE_PRIVATE);
 
         chatAdapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1, chatArray);
         lvMessage = findViewById<ListView>(R.id.lvMessage);
@@ -38,8 +45,17 @@ class ChatRoomActivity : AppCompatActivity() {
             mDialogView.dialogChatBtn.setOnClickListener {
                 mAlertDialog.dismiss()
 
-                val name = mDialogView.chatTo.text.toString()
-                Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show();
+                val loginName = prefs.getString("username", "");
+                val nameTxt = mDialogView.chatTo.text.toString()
+
+                editor = prefs.edit();
+                editor.putString("chatRoom", loginName+"_"+nameTxt);
+                editor.apply();
+
+                val intent = Intent(this, MessagesActivity::class.java);
+                startActivity(intent);
+
+//                Toast.makeText(applicationContext, loginName+"_"+nameTxt, Toast.LENGTH_LONG).show();
             }
             mDialogView.dialogCloseBtn.setOnClickListener {
                 mAlertDialog.dismiss()

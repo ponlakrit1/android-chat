@@ -2,19 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootItem"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/textMemberName"
-        android:layout_width="wrap_content"
+        android:id="@+id/textMessage"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="..."
-        android:textSize="16dp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:layout_marginLeft="16dp" />
+        android:textSize="16dp" />
 
 </LinearLayout>

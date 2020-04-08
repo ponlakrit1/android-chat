@@ -34,9 +34,9 @@ class RecyclerAdapter(private val items: ArrayList<MessageModel>, private val li
                 textMessage.text = message.message
 
                 if(message.gravityStatus){
-                    textMessage.gravity = Gravity.RIGHT;
+                    messageLayout.gravity = Gravity.END;
                 } else {
-                    textMessage.gravity = Gravity.LEFT;
+                    messageLayout.gravity = Gravity.START;
                 }
             }
 

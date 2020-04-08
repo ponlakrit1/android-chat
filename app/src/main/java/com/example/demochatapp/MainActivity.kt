@@ -36,7 +36,10 @@ class MainActivity : AppCompatActivity() {
         var txtTest : JSONObject? = null;
 
         if (txtUsername.toString() !== "") {
-            val jsonObjectRequest = JsonArrayRequest(Request.Method.GET, ROOT_URL + "/user/"+txtUsername, null,
+
+            // get data from API
+            val jsonObjectRequest = JsonArrayRequest(Request.Method.GET,
+                "$ROOT_URL/user/$txtUsername", null,
                 Response.Listener<JSONArray> { response ->
 
                     prefs = getSharedPreferences("UserPref", Context.MODE_PRIVATE);
@@ -61,6 +64,8 @@ class MainActivity : AppCompatActivity() {
 
             MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
 
+        } else {
+            Toast.makeText(applicationContext, "Error type a text pls", Toast.LENGTH_LONG).show();
         }
     }
 }

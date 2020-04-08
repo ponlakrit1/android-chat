@@ -30,30 +30,33 @@ class MessagesActivity : AppCompatActivity(), RecyclerListener {
     lateinit var chatMsg: EditText;
 
     lateinit var messageList : ArrayList<MessageModel>;
-    lateinit var memberAdapter : RecyclerAdapter;
+    lateinit var messageAdapter : RecyclerAdapter;
     lateinit var recyclerView: RecyclerView;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
-        chatMsg = findViewById<EditText>(R.id.message);
-
         // PREFS
         prefs = getSharedPreferences("UserPref", Context.MODE_PRIVATE);
         val chatName = prefs.getString("chatRoom", "");
         val loginName = prefs.getString("username", "");
+        val chatTo = prefs.getString("chatTo", "");
+
+        title = chatTo;
+        chatMsg = findViewById<EditText>(R.id.message);
 
         // init adapter
         messageList = ArrayList<MessageModel>();
-        memberAdapter = RecyclerAdapter(messageList, this)
+//        messageList = loadMessageData();
+        messageAdapter = RecyclerAdapter(messageList, this)
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
             layoutManager = GridLayoutManager(context, 1, GridLayoutManager.VERTICAL, false)
             isNestedScrollingEnabled = false
-            adapter = memberAdapter
+            adapter = messageAdapter
             onFlingListener = null
         }
-        memberAdapter.notifyDataSetChanged()
+        messageAdapter.notifyDataSetChanged()
 
         // Connect to socket.io
         try {
@@ -69,7 +72,8 @@ class MessagesActivity : AppCompatActivity(), RecyclerListener {
 
                     messageList.add(MessageModel(data.getString("chatroom"), data.getString("username"), data.getString("message"), gravityStatus));
                     runOnUiThread {
-                        memberAdapter.notifyDataSetChanged();
+                        messageAdapter.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(messageAdapter.itemCount - 1);
                     }
                 } catch (e: JSONException) {
                     Log.e("SOCKET", "Socket message error")
@@ -92,11 +96,19 @@ class MessagesActivity : AppCompatActivity(), RecyclerListener {
             obj.put("message", txtChatMsg)
             mSocket.emit("message", obj);
 
-//            chatMsg.text.clear();
+            chatMsg.setText("");
         }
     }
 
     override fun onItemClick() {
+
+    }
+
+    fun loadMessageData(){
+
+    }
+
+    fun keepMessageData(){
 
     }
 }

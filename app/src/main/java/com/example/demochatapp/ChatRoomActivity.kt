@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
@@ -41,10 +42,6 @@ class ChatRoomActivity : AppCompatActivity() {
         prefs = getSharedPreferences("UserPref", Context.MODE_PRIVATE);
         val loginName = prefs.getString("username", "");
 
-        chatAdapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1, chatArray);
-        lvMessage = findViewById<ListView>(R.id.lvMessage);
-        lvMessage.adapter = chatAdapter
-
         // get data from API
         val jsonObjectRequest = JsonArrayRequest(
             Request.Method.GET, "$ROOT_URL/chatroom/$loginName", null,
@@ -67,6 +64,21 @@ class ChatRoomActivity : AppCompatActivity() {
         )
         MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
 
+        // Listview
+        chatAdapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1, chatArray);
+        lvMessage = findViewById<ListView>(R.id.lvMessage);
+        lvMessage.adapter = chatAdapter
+        lvMessage.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            val itemValue = lvMessage.getItemAtPosition(position) as String
+
+            editor = prefs.edit();
+            editor.putString("chatRoom", loginName+"_"+itemValue);
+            editor.putString("chatTo", itemValue);
+            editor.apply();
+
+            getChatRoomFromWebService(loginName, itemValue);
+        }
+
         // FAB button
         val mFab = findViewById<FloatingActionButton>(R.id.fabAddChat)
         mFab.setOnClickListener {
@@ -76,7 +88,6 @@ class ChatRoomActivity : AppCompatActivity() {
 
             mDialogView.dialogChatBtn.setOnClickListener {
                 mAlertDialog.dismiss()
-
                 val nameTxt = mDialogView.chatTo.text.toString()
 
                 editor = prefs.edit();
@@ -84,34 +95,36 @@ class ChatRoomActivity : AppCompatActivity() {
                 editor.putString("chatTo", nameTxt);
                 editor.apply();
 
-                // get data from API
-                val jsonObjectRequest = JsonArrayRequest(
-                    Request.Method.GET, "$ROOT_URL/chatroom/$loginName/$nameTxt", null,
-                    Response.Listener<JSONArray> { response ->
-
-                        if(response.length() != 0){
-                            var obj : JSONObject = response.getJSONObject(0);
-
-                            editor = prefs.edit();
-                            editor.putString("chatNo", obj.getString("chat_no"));
-                            editor.apply();
-                        }
-
-                        val intent = Intent(this, MessagesActivity::class.java);
-                        startActivity(intent);
-                    },
-                    Response.ErrorListener { error ->
-                        Log.e("chatRoom", "$error");
-                    }
-                )
-
-                MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
-
-//                Toast.makeText(applicationContext, loginName+"_"+nameTxt, Toast.LENGTH_LONG).show();
+                getChatRoomFromWebService(loginName, nameTxt);
             }
             mDialogView.dialogCloseBtn.setOnClickListener {
                 mAlertDialog.dismiss()
             }
         }
+    }
+
+    private fun getChatRoomFromWebService(loginName : String, nameTxt : String){
+        // get data from API
+        val jsonObjectRequest = JsonArrayRequest(
+            Request.Method.GET, "$ROOT_URL/chatroom/$loginName/$nameTxt", null,
+            Response.Listener<JSONArray> { response ->
+
+                if(response.length() != 0){
+                    var obj : JSONObject = response.getJSONObject(0);
+
+                    editor = prefs.edit();
+                    editor.putString("chatNo", obj.getString("chat_no"));
+                    editor.putString("messageNo", obj.getString("message_no"));
+                    editor.apply();
+                }
+
+                val intent = Intent(this, MessagesActivity::class.java);
+                startActivity(intent);
+            },
+            Response.ErrorListener { error ->
+                Log.e("chatRoom", "$error");
+            }
+        )
+        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 }

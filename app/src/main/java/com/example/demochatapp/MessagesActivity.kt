@@ -129,9 +129,10 @@ class MessagesActivity : AppCompatActivity(), RecyclerListener {
                     if(messageData != ""){
                         val completedMsg = messageData.substring(1, messageData.length - 1);
                         val datarList: List<MessageModel> = gson.fromJson(completedMsg , Array<MessageModel>::class.java).toList();
-                        for (i in datarList.indices) {
-                            messageList.add(datarList[i]);
-                        }
+                        messageList.addAll(datarList);
+//                        for (i in datarList.indices) {
+//                            messageList.add(datarList[i]);
+//                        }
                     }
                 }
 

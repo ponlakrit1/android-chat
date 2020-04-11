@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
+import com.example.demochatapp.adapter.ListViewAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.chat_room_dialog.view.*
 import org.json.JSONArray
@@ -29,6 +30,7 @@ class ChatRoomActivity : AppCompatActivity() {
     lateinit var lvMessage : ListView;
 
     lateinit var chatArray: ArrayList<String>;
+    lateinit var recentArray: ArrayList<String>;
     lateinit var chatAdapter: ArrayAdapter<String>;
 
     lateinit var prefs : SharedPreferences;
@@ -39,6 +41,7 @@ class ChatRoomActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat_room)
 
         chatArray = ArrayList<String>();
+        recentArray = ArrayList<String>();
         prefs = getSharedPreferences("UserPref", Context.MODE_PRIVATE);
         val loginName = prefs.getString("username", "");
 
@@ -54,6 +57,8 @@ class ChatRoomActivity : AppCompatActivity() {
                     } else {
                         chatArray.add(item.getString("chat_from"));
                     }
+
+                    recentArray.add(item.getString("message_recent"));
                 }
 
                 chatAdapter.notifyDataSetChanged();
@@ -65,7 +70,8 @@ class ChatRoomActivity : AppCompatActivity() {
         MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
 
         // Listview
-        chatAdapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1, chatArray);
+//        chatAdapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_1, chatArray);
+        chatAdapter = ListViewAdapter(this, chatArray, recentArray)
         lvMessage = findViewById<ListView>(R.id.lvMessage);
         lvMessage.adapter = chatAdapter
         lvMessage.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->

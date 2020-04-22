@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DemoChatApp</string>
+    <string name="title_activity_index">IndexActivity</string>
+    <string name="title_home">หน้าหลัก</string>
+    <string name="title_history">ประวัติการรักษา</string>
+    <string name="title_body">ท่ากายภาพบำบัด</string>
+    <string name="title_chat">พูดคุย</string>
 </resources>

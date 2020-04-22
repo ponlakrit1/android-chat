@@ -17,9 +17,10 @@ import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
-    var ROOT_URL = "http://192.168.39.148:3000";
+    var ROOT_URL = "http://192.168.39.51:3000";
 
     private var username: EditText? = null;
+    private var password: EditText? = null;
 
     lateinit var prefs : SharedPreferences;
     lateinit var editor : SharedPreferences.Editor;
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         username = findViewById<EditText>(R.id.username);
     }
 
-    fun onLogin(view: View?) {
+    fun onLoginTemp(view: View?) {
         val txtUsername = username?.text;
         var txtTest : JSONObject? = null;
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
 //                    Toast.makeText(applicationContext, prefs.getString("username", ""), Toast.LENGTH_SHORT).show();
 
-                    val intent = Intent(this, ChatRoomActivity::class.java);
+                    val intent = Intent(this, IndexActivity::class.java);
                     startActivity(intent);
                 },
                 Response.ErrorListener { error ->
@@ -67,5 +68,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(applicationContext, "Error type a text pls", Toast.LENGTH_LONG).show();
         }
+    }
+
+    fun onLogin(view: View?) {
+        val intent = Intent(this, IndexActivity::class.java);
+        startActivity(intent);
     }
 }
